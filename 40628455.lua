@@ -1,52 +1,56 @@
-﻿-- 導入 "js" 模組
-local js = require "js"
--- global 就是 javascript 的 window
-local global = js.global
-local document = global.document
--- html 檔案中 canvas　id 設為 "canvas"
-local canvas = document:getElementById("canvas")
--- 將 ctx 設為 canvas 2d 繪圖畫布變數
-local ctx = canvas:getContext("2d")
-
--- 乘上 deg 可轉為徑度單位
+﻿local ctx = require "js".global.document:getElementById("canvas"):getContext("2d")
 deg = math.pi / 180
+si = 315
 
--- 建立多邊形定點位置畫線函式
-function star(radius, xc, yc, n, fs, ss, fors)
-    radius = radius or 50
-    xc = xc or 100
-    yc = yc or 100
-    n = n or 5
-    -- 屬性呼叫使用 . 而方法呼叫使用 :
-    -- 填色屬性
-    fs = fs or "rgb(200,0,0)"
-    -- 畫筆顏色屬性
-    ss = ss or "rgb(0,0,200)"
-    -- 內定為填色
-    fors = fors or "fill"
-    ctx.fillStyle = fs
-    ctx.strokeStyle = ss
-    xi = xc + radius*math.cos((360/n)*deg+180*deg)
-    yi = yc - radius*math.sin((360/n)*deg+180*deg)
-    ctx:beginPath()
-    ctx:moveTo(xi,yi)
-    for i = 2, n+1 do
-        x = xc + radius*math.cos((360/n)*deg*i+180*deg)
-        y = yc - radius*math.sin((360/n)*deg*i+180*deg)
-        ctx:lineTo(x,y)
-    end
-    ctx:closePath()
-    if fors == "fill" then
-        ctx:fill()
-    else
-        ctx:stroke()
-    end
+function star(xi , yi)
+	x = xi + si * 0.01565 * math.cos(54 * deg)
+	y = yi - si * 0.01565 * math.sin(54 * deg)
+	ctx : beginPath()	ctx : moveTo(x , y)
+	for i = 0,9 do
+		x = xi + si * 0.01565 * (i % 2 + 1) * math.cos( (i * 36 + 54) * deg)
+		y = yi - si * 0.01565 * (i % 2 + 1) * math.sin( (i * 36 + 54) * deg)
+		ctx : lineTo(x , y)
+	end
+	ctx : closePath()
 end
 
+function rectangle(yi)
+    ctx : beginPath()
+        ctx : moveTo(0 , yi)
+        ctx : lineTo(si * 1.9 , yi)
+        ctx : lineTo(si * 1.9 , yi + si / 13)
+        ctx : lineTo(0 , yi + si / 13)
+    ctx : closePath()
+end
 
-star(200, 300, 300, 6, "rgb(100,100,0)", "rgb(100,100,0)", "stroke")
-star(140, 300, 300, 6, "rgb(100,100,0)", "rgb(100,100,0)", "stroke")
-star(50, 300, 300, 30, "rgb(100,100,0)", "rgb(100,100,0)", "stroke")
-ctx:closePath()
-ctx:fill()
+for i = 0,12 do
+    if i % 2 == 0 then
+        ctx.fillStyle = "rgb(178,34,52)"
+    else
+        ctx.fillStyle = "rgb(255,255,255)"
+    end
+    rectangle(i * si / 13)
+    ctx : fill()
+end
+
+ctx.fillStyle = "rgb(60,59,110)"
+ctx : beginPath()
+    ctx : moveTo(0 , 0)
+    ctx : lineTo(si * 0.76 , 0)
+    ctx : lineTo(si * 0.76 , si * 7 / 13)
+    ctx : lineTo(0 , si * 7 / 13)
+ctx : closePath()
+ctx : fill()
+
+for i = 1,9 do
+    for ii = 1,11 do
+        if (i + ii) % 2 == 0 then
+            x = si * ii * 0.76 /12
+            y = si * i  * 7 /130
+            ctx.fillStyle = "rgb(255,255,255)"
+            star(x , y)
+            ctx : fill()
+        end
+    end
+end
     
